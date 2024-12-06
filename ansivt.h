@@ -4,16 +4,16 @@
 
 #if _BYPASS_ANSIVT == 0
 
-	#define FG_BLACK "[30m"
-	#define FG_RED "[31m"
-	#define FG_GREEN "[32m"
-	#define FG_YELLOW "[33m"
+	#define FG_BLACK "\e[30m"
+	#define FG_RED "\e[31m"
+	#define FG_GREEN "\e[32m"
+	#define FG_YELLOW "\e[33m"
 	#define FG_BLUE "[34m"
 	#define FG_MAGENTA "[35m"
 	#define FG_CYAN "[36m"
 	#define FG_WHITE "[37m"
 
-	#define FG_BRIGHT_BLACK "[90m"
+	#define FG_BRIGHT_BLACK "\e[90m"
 	#define FG_BRIGHT_RED "[91m"
 	#define FG_BRIGHT_GREEN "[92m"
 	#define FG_BRIGHT_YELLOW "[93m"

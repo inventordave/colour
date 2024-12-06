@@ -45,5 +45,30 @@ extern char BG_BRIGHT_WHITE[8];
 
 extern char NORMAL[8];
 
-#endif
+
+
+
+
+extern char BOLD[5]; // \e[1m
+extern char UNDERLINE[5]; // \e[4m
+
+
+// \eG "bell noise"
+// \eI "tab"
+// \eJ nextline (LF)
+// \eM (CR) carraige return
+// \eH "backspace" (moves the cursor back)
+
+
+extern char CLS[5]; // \e[2J
+extern char MOV_CRSR_TOPLEFT[4]; // \033[H , \e[H
+extern char CLEAR_REST_OF_LINE[4]; // \e[K
+extern char MOV_CRSR_DOWN_N[3+str_len_representing_num_lines]; // \e[<n>B
+extern char MOV_CRSR_UP_N[3+str_len_representing_num_lines]; // \e[<n>A
+extern char MOV_CRSR_LEFT_COLS[3+str_len_representing_num_cols]; // \e[<n>D
+extern char MOV_CRSR_RIGHT_COLS[3+str_len_representing_num_cols]; // \e[<n>C
+
+
+
+##endif
 
