@@ -17,7 +17,7 @@ extern char* ANSIVT_BG;
 extern char* getVTCodeString( char );
 extern char ResetAnsiVtCodes(char);
 extern char* SetVT( char*, char* ); //fg and bg colour.
-extern char* f( int sc ); // eg, +i, +b, -i, -b, and so on.
+extern char* fmt( int sc ); // eg, +i, +b, -i, -b, and so on.
 extern char* fg( char* );
 extern char* bg( char* );
 
@@ -41,10 +41,13 @@ typedef struct {
 
 extern _ANSI_* ANSI;
 
-// generates the ansivt-formatted output string.
-extern char* ANSIVT( char* str, char cc[], long long int offsets[], int _frees );
-extern struct AVTC* ActivateColorConsole();
+
+extern _ANSI_* ActivateColorConsole();
 extern void Init_ANSIVT_CTABLE();
+
+// generates the ansivt-formatted output string.
+extern char* ANSIVT( char* str, char cc[], long long int offsets[] );
+// resets code. if Arg = 1, populates control-code strings. If Arg=0, blanks them, resulting in no VT100 colourization.
 extern char resetAnsiVtCodes(char);
 #define VTCODEWIDTH 8
 
@@ -95,15 +98,13 @@ extern char CARRAIGERETURN[8]; // \eM
 extern char CRSRBACKSPACE[8]; // \eH
 extern char BELL[8]; // \eG
 
-#define str_len_representing_num_cols 2
-#define str_len_representing_num_lines 3
 extern char CLS[8]; // \e[2J
 extern char MOV_CRSR_TOPLEFT[8]; // \033[H , \e[H
 extern char CLEAR_REST_OF_LINE[8]; // \e[K
-extern char MOV_CRSR_DOWN_N[3+str_len_representing_num_lines]; // \e[<n>B
-extern char MOV_CRSR_UP_N[3+str_len_representing_num_lines]; // \e[<n>A
-extern char MOV_CRSR_LEFT_COLS[3+str_len_representing_num_cols]; // \e[<n>D
-extern char MOV_CRSR_RIGHT_COLS[3+str_len_representing_num_cols]; // \e[<n>C
+extern char MOV_CRSR_DOWN_N[8]; // \e[<n>B
+extern char MOV_CRSR_UP_N[8]; // \e[<n>A
+extern char MOV_CRSR_LEFT_COLS[8]; // \e[<n>D
+extern char MOV_CRSR_RIGHT_COLS[8]; // \e[<n>C
 
 #endif
 

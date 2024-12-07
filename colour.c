@@ -80,7 +80,7 @@ char MOV_CRSR_LEFT_COLS[8];
 char MOV_CRSR_RIGHT_COLS[8];
 
 
-char* ANSIVT( char* str, char cc[], LARGE offsets[], int _frees )	{
+char* ANSIVT( char* str, char cc[], LARGE offsets[] )	{
 		
 	LARGE str_width = strlen(str);
 	LARGE width = str_width + (strlen(cc)*VTCODEWIDTH);
@@ -106,13 +106,16 @@ char* ANSIVT( char* str, char cc[], LARGE offsets[], int _frees )	{
 		++cc;
 		++q;
 
-		if( *cc == '\0' ){
+		if( *cc == '\0' )	{
 
 			LARGE y = strlen(_);
 			for( LARGE x=t;x<str_width; x++ )
 				_[y++]=str[x];
+		
 			_[y] = '\0';			
-			break;}}
+			break;
+		}
+	}
 
 	return _;
 }
@@ -121,7 +124,7 @@ char* ANSIVT( char* str, char cc[], LARGE offsets[], int _frees )	{
 // ANSI/VT Global Refs.
 char* ANSIVT_FG;
 char* ANSIVT_BG;
-struct _ANSI_* ANSI;
+_ANSI_* ANSI;
 
 // FUNCTIONS
 char ResetAnsiVtCodes(char f)	{
@@ -262,9 +265,6 @@ char ResetAnsiVtCodes(char f)	{
 	return (ansivt = f);
 }
 
-
-
-
 char* fg( char* c )	{
 
 	if(c!=0)
@@ -294,12 +294,12 @@ char* SetVT( char* fg, char* bg )	{
 
 	for( i=0; i<16; i++ ){
 
-		if( streq( fg, ANSI->c->ANSIVT_CTABLE[i*4] ) ){
+		if( streq( fg, ANSI->ANSIVT_CTABLE[i*4] ) ){
 
-			fg_ = getstring( *(ANSI->c->ANSIVT_CTABLE + (i*4) + 4) );
+			fg_ = getstring( *(ANSI->ANSIVT_CTABLE + (i*4) + 4) );
 			printf( "%s", fg_ );
 			ANSI->ANSIVT_FG = fg;
-			ANSI->c->fg( fg_ );
+			ANSI->fg( fg_ );
 			break;
 		}
 	}
@@ -310,12 +310,12 @@ char* SetVT( char* fg, char* bg )	{
 
 	for( i=16; i<(16*2); i++ ){
 
-		if( streq( bg, ANSI->c->ANSIVT_CTABLE[i*4] ) ){
+		if( streq( bg, ANSI->ANSIVT_CTABLE[i*4] ) ){
 
-			bg_ = getstring( ANSI->c->ANSIVT_CTABLE[(i*4)+4] );
+			bg_ = getstring( ANSI->ANSIVT_CTABLE[(i*4)+4] );
 			printf( "%s", bg_ );
 			ANSI->ANSIVT_BG = bg;
-			ANSI->c->bg( bg_ );
+			ANSI->bg( bg_ );
 			break;
 		}
 	}
@@ -506,10 +506,8 @@ int colorMode()	{
 				StdHandle,
 				0x0001 | 0x0002 | ENABLE_VIRTUAL_TERMINAL_PROCESSING
 			);
-			
-			#ifdef _WIN32_
-LPDWORD resultCode;
-#endif
+
+			LPDWORD resultCode;
 
 		#else
 
@@ -519,6 +517,7 @@ LPDWORD resultCode;
 	}
 
 	int x = ( color==0 ? 0 : 1 );
+	Init_ANSIVT_CTABLE();
 	#ifdef DAVELIB_VERBOSE
 	if( x==0 )		
 		printf( "ANSI/VT Support Not Available in this Win32-API console process.\n" );
@@ -531,7 +530,8 @@ LPDWORD resultCode;
 	return x;
 }
 
-_ANSI_ Init_ANSI(){
+
+_ANSI_* ActivateColorConsole()	{
 
 	
 	ANSI->RVC = ResetAnsiVtCodes;
@@ -542,13 +542,14 @@ _ANSI_ Init_ANSI(){
 	ANSI->ANSIVT_FG = "default";
 	ANSI->ANSIVT_FG = "default";
 	
-	ANSI->ANSIVT_CTABLE = (char**)malloc( (FG_COLORS+BG_COLORS)*2 * sizeof(char*) + 1 );	
+	ANSI->ANSIVT_CTABLE = (char**)malloc( (MAX_FG_COLORS+MAX_BG_COLORS)*2 * sizeof(char*) + 1 );	
 
 	return ANSI;
 }
 
 char* getVTCodeString( char cc )	{
 
-	return *(ANSI->c->ANSIVT_CTABLE + (cc*4) + 4);
+	#define sizeofptr sizeof( char* )
+	return *(ANSI->ANSIVT_CTABLE + (cc*sizeofptr*2) + sizeofptr);
 }
 
